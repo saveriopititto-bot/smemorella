@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smemorella - Un app per smemoinnamorati 💕</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Rimuove evidenziazione blu su mobile */
         }
 
         body {
@@ -21,7 +22,7 @@
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Centra verticalmente su desktop */
         }
 
         .container {
@@ -31,6 +32,7 @@
             max-width: 600px;
             width: 100%;
             padding: 40px;
+            margin: 0 auto;
         }
 
         h1 {
@@ -38,6 +40,14 @@
             color: #083A4F;
             margin-bottom: 0px;
             font-size: 2em;
+        }
+        
+        h1 img {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 10px;
+            /* Per evitare che esca fuori su schermi piccolissimi */
+            width: 100%; 
         }
 
         .subtitle {
@@ -140,6 +150,7 @@
             font-size: 1em;
             font-weight: bold;
             transition: background 0.3s;
+            white-space: nowrap; /* Evita che il testo vada a capo */
         }
 
         .add-task button:hover {
@@ -148,6 +159,7 @@
 
         .tasks {
             list-style: none;
+            padding-bottom: 20px;
         }
 
         .task-item {
@@ -193,16 +205,19 @@
             height: 24px;
             cursor: pointer;
             accent-color: #4D7E8C;
+            flex-shrink: 0; /* Impedisce alla checkbox di schiacciarsi */
         }
 
         .task-content {
             flex: 1;
+            overflow: hidden; /* Gestione overflow testo */
         }
 
         .task-text {
             color: #333;
             font-size: 1em;
             margin-bottom: 5px;
+            word-wrap: break-word; /* Va a capo se il testo è lungo */
         }
 
         .task-meta {
@@ -219,6 +234,7 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: background 0.3s;
+            flex-shrink: 0; /* Impedisce al bottone di schiacciarsi */
         }
 
         .delete-btn:hover {
@@ -243,10 +259,12 @@
             padding-top: 20px;
             border-top: 2px solid #e0e0e0;
             justify-content: center;
+            flex-wrap: wrap; /* Permette alle statistiche di andare a capo */
         }
 
         .stat {
             text-align: center;
+            min-width: 80px;
         }
 
         .stat-number {
@@ -265,6 +283,7 @@
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
+            font-size: 0.95em;
         }
 
         .setup-instructions h3 {
@@ -275,7 +294,7 @@
         .setup-instructions ol {
             margin-left: 20px;
             color: #666;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .setup-instructions code {
@@ -284,6 +303,7 @@
             border-radius: 4px;
             font-family: monospace;
             font-size: 0.9em;
+            word-break: break-all; /* Rompe i codici lunghi su mobile */
         }
 
         .setup-instructions a {
@@ -295,12 +315,64 @@
         .setup-instructions a:hover {
             text-decoration: underline;
         }
+
+        /* --- STILI PER MOBILE --- */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                align-items: flex-start; /* In alto invece che al centro su mobile */
+            }
+
+            .container {
+                padding: 20px; /* Meno spazio interno */
+                margin-top: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            h1 img {
+                max-width: 80%; /* Logo leggermente più piccolo */
+            }
+
+            .add-task {
+                flex-direction: column; /* Input e bottone uno sotto l'altro */
+            }
+
+            .add-task button {
+                width: 100%; /* Bottone largo tutto lo schermo */
+                padding: 12px;
+            }
+
+            .task-item {
+                flex-wrap: wrap; /* Permette agli elementi di andare a capo se serve */
+                gap: 10px;
+            }
+            
+            .task-content {
+                min-width: 150px; /* Assicura spazio al testo */
+            }
+
+            .delete-btn {
+                padding: 6px 12px; /* Bottone elimina un po' più compatto */
+                margin-left: auto; /* Lo spinge a destra */
+            }
+            
+            .stats {
+                gap: 10px;
+            }
+            
+            .stat-number {
+                font-size: 1.5em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>
-            <img src="https://github.com/saveriopititto-bot/smemorella/blob/main/assets/smemorella.png" alt="Smemorella" style="max-width: 300px; height: auto; margin-bottom: 10px;">
+            <img src="https://github.com/saveriopititto-bot/smemorella/blob/main/assets/smemorella.png?raw=true" alt="Smemorella">
         </h1>
         <p class="subtitle">Un'app per smemoinnamorati 💕</p>
 
@@ -313,7 +385,7 @@
                 <li>Copia <code>Project URL</code> e <code>anon public key</code></li>
                 <li>Incollali nello script qui sotto (cerca <code>SUPABASE_URL</code>)</li>
                 <li>Vai su "SQL Editor" e esegui questo comando:
-                    <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px; overflow-x: auto;">
+                    <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px; overflow-x: auto; white-space: pre-wrap;">
 CREATE TABLE tasks (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   text TEXT NOT NULL,
@@ -366,11 +438,10 @@ CREATE POLICY "Allow all operations" ON tasks
         </div>
     </div>
 
-    <!-- Supabase SDK -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // 🔥 CONFIGURAZIONE SUPABASE - SOSTITUISCI CON I TUOI DATI!
+        // 🔥 CONFIGURAZIONE SUPABASE - I tuoi dati sono già inseriti qui
         const SUPABASE_URL = 'https://ydtugfoezvdjsqmtnejg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkdHVnZm9lenZkanNxbXRuZWpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDA2NTEsImV4cCI6MjA4NjQ3NjY1MX0.i9zm2s6p8n6opYiKg3SUvh-uQBreyiGfWC6zJ0U9Jfs';
 
