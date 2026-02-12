@@ -1,421 +1,356 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Smemorella - Un app per smemoinnamorati 💕</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sugar+Display&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
+        /* --- RESET E VARIABILI --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Rimuove evidenziazione blu su mobile */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #4D7E8C;       /* Blu Petrolio */
+            --primary-dark: #3D6E7C;
+            --accent: #FF6B6B;        /* Rosso Corallo per eliminare */
+            --accent-hover: #FF5252;
+            --bg-gradient-start: #4D7E8C;
+            --bg-gradient-end: #083A4F;
+            --text-main: #2c3e50;
+            --text-muted: #95a5a6;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.4);
         }
 
         body {
-            font-family: 'Sugar Display', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4D7E8C 0%, #083A4F 100%);
+            font-family: 'Nunito', 'Segoe UI', sans-serif; /* Font leggibile per il contenuto */
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center; /* Centra verticalmente su desktop */
+            align-items: center; /* Centrato su Desktop */
+            color: var(--text-main);
         }
 
+        /* --- CONTENITORE GLASSMORPHISM --- */
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px); /* Effetto sfocatura dietro */
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
             max-width: 600px;
             width: 100%;
             padding: 40px;
             margin: 0 auto;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* --- TITOLI E IMMAGINI --- */
         h1 {
             text-align: center;
-            color: #083A4F;
-            margin-bottom: 0px;
-            font-size: 2em;
+            margin-bottom: 5px;
+            font-family: 'Sugar Display', cursive; /* Font decorativo solo per il titolo */
         }
         
         h1 img {
-            max-width: 300px;
+            max-width: 280px;
             height: auto;
-            margin-bottom: 10px;
-            /* Per evitare che esca fuori su schermi piccolissimi */
             width: 100%; 
+            display: block;
+            margin: 0 auto 10px auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
         .subtitle {
             text-align: center;
-            color: #888;
-            margin-bottom: 30px;
-            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            font-size: 1.1em;
+            font-family: 'Sugar Display', cursive;
+            letter-spacing: 0.5px;
         }
 
-        .sync-status {
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 8px;
-            background: #C0D5D6;
-            border-radius: 8px;
-            color: #083A4F;
-            font-size: 0.9em;
-            display: none;
+        /* --- INPUT E BOTTONI --- */
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid transparent;
+            background: #f0f4f8;
+            border-radius: 16px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            color: var(--text-main);
         }
 
-        .sync-status.syncing {
-            background: #F5F0E8;
-            color: #A68D66;
+        input[type="text"]:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(77, 126, 140, 0.15);
         }
 
-        .sync-status.error {
-            background: #ffebee;
-            color: #c62828;
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 700;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Bottone Primario */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(77, 126, 140, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(77, 126, 140, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* --- SETUP NAME --- */
         .name-setup {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
-
-        .name-setup input {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-        }
-
-        .name-setup button {
-            padding: 12px 24px;
-            background: #4D7E8C;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .name-setup button:hover {
-            background: #3D6E7C;
-        }
+        .name-setup input { flex: 1; min-width: 200px; }
 
         .current-user {
             text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #C0D5D6;
-            border-radius: 10px;
-            color: #083A4F;
-            font-weight: bold;
+            margin-bottom: 25px;
+            padding: 8px 16px;
+            background: rgba(77, 126, 140, 0.1);
+            border-radius: 50px;
+            color: var(--primary);
+            font-weight: 700;
+            display: inline-block;
+            font-size: 0.9em;
+            /* Centra il badge */
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
+        /* --- ADD TASK --- */
         .add-task {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
         }
+        .add-task input { flex: 1; }
+        .add-task button { white-space: nowrap; }
 
-        .add-task input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        .add-task input:focus {
-            outline: none;
-            border-color: #4D7E8C;
-        }
-
-        .add-task button {
-            padding: 15px 30px;
-            background: #4D7E8C;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background 0.3s;
-            white-space: nowrap; /* Evita che il testo vada a capo */
-        }
-
-        .add-task button:hover {
-            background: #3D6E7C;
-        }
-
+        /* --- LISTA TASKS --- */
         .tasks {
             list-style: none;
             padding-bottom: 20px;
         }
 
         .task-item {
-            background: #E5E1DD;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            transition: all 0.3s;
-            animation: slideIn 0.3s ease-out;
+            gap: 16px;
+            transition: all 0.3s ease;
+            animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .task-item:hover {
-            background: #D5D1CD;
-            transform: translateX(5px);
+            transform: translateX(4px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         }
 
         .task-item.completed {
             opacity: 0.6;
-            background: #C0D5D6;
+            background: #f8f9fa;
         }
 
         .task-item.completed .task-text {
             text-decoration: line-through;
-            color: #888;
+            color: var(--text-muted);
         }
 
+        /* CHECKBOX ROTONDA PERSONALIZZATA */
         .task-checkbox {
-            width: 24px;
-            height: 24px;
+            appearance: none;
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
             cursor: pointer;
-            accent-color: #4D7E8C;
-            flex-shrink: 0; /* Impedisce alla checkbox di schiacciarsi */
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            background: white;
+        }
+
+        .task-checkbox:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+            background-position: center;
+            background-repeat: no-repeat;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(77, 126, 140, 0.4);
         }
 
         .task-content {
             flex: 1;
-            overflow: hidden; /* Gestione overflow testo */
+            overflow: hidden;
         }
 
         .task-text {
-            color: #333;
-            font-size: 1em;
-            margin-bottom: 5px;
-            word-wrap: break-word; /* Va a capo se il testo è lungo */
+            color: var(--text-main);
+            font-size: 1.05em;
+            margin-bottom: 4px;
+            word-wrap: break-word;
+            font-weight: 600;
         }
 
         .task-meta {
             font-size: 0.8em;
-            color: #888;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
+        /* Bottone Elimina (Corallo) */
         .delete-btn {
-            background: #083A4F;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s;
-            flex-shrink: 0; /* Impedisce al bottone di schiacciarsi */
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--accent);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            flex-shrink: 0;
         }
 
         .delete-btn:hover {
-            background: #062A3A;
+            background: var(--accent);
+            color: white;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #888;
-        }
-
-        .empty-state-icon {
-            font-size: 4em;
-            margin-bottom: 10px;
-        }
-
+        /* --- STATS --- */
         .stats {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
+            padding-top: 25px;
+            border-top: 2px solid #f0f4f8;
             justify-content: center;
-            flex-wrap: wrap; /* Permette alle statistiche di andare a capo */
+            flex-wrap: wrap;
         }
 
-        .stat {
-            text-align: center;
-            min-width: 80px;
+        .stat { text-align: center; min-width: 80px; }
+        .stat-number { font-size: 1.8em; font-weight: 800; color: var(--primary); }
+        .stat-label { font-size: 0.85em; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- EMPTY STATE --- */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-state-icon { font-size: 4em; margin-bottom: 15px; opacity: 0.5; animation: float 3s ease-in-out infinite; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
-        .stat-number {
-            font-size: 2em;
+        /* --- STATUS BAR --- */
+        .sync-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(4px);
             font-weight: bold;
-            color: #A68D66;
+            color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: none;
         }
+        .sync-status.error { color: var(--accent); background: rgba(255, 235, 238, 0.9); }
 
-        .stat-label {
-            font-size: 0.9em;
-            color: #888;
-        }
+        /* --- ISTRUZIONI (nascoste se configurato) --- */
+        .setup-instructions { background: #fff8e1; padding: 20px; border-radius: 16px; margin-bottom: 20px; font-size: 0.9em; border: 1px solid #ffe0b2; }
+        .setup-instructions code { background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 4px; font-family: monospace; word-break: break-all; }
 
-        .setup-instructions {
-            background: #F5F0E8;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.95em;
-        }
-
-        .setup-instructions h3 {
-            color: #A68D66;
-            margin-bottom: 10px;
-        }
-
-        .setup-instructions ol {
-            margin-left: 20px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .setup-instructions code {
-            background: #f5f5f5;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9em;
-            word-break: break-all; /* Rompe i codici lunghi su mobile */
-        }
-
-        .setup-instructions a {
-            color: #4D7E8C;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .setup-instructions a:hover {
-            text-decoration: underline;
-        }
-
-        /* --- STILI PER MOBILE --- */
+        /* --- MEDIA QUERY MOBILE --- */
         @media (max-width: 480px) {
-            body {
-                padding: 10px;
-                align-items: flex-start; /* In alto invece che al centro su mobile */
-            }
-
-            .container {
-                padding: 20px; /* Meno spazio interno */
-                margin-top: 20px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-            
-            h1 img {
-                max-width: 80%; /* Logo leggermente più piccolo */
-            }
-
-            .add-task {
-                flex-direction: column; /* Input e bottone uno sotto l'altro */
-            }
-
-            .add-task button {
-                width: 100%; /* Bottone largo tutto lo schermo */
-                padding: 12px;
-            }
-
-            .task-item {
-                flex-wrap: wrap; /* Permette agli elementi di andare a capo se serve */
-                gap: 10px;
-            }
-            
-            .task-content {
-                min-width: 150px; /* Assicura spazio al testo */
-            }
-
-            .delete-btn {
-                padding: 6px 12px; /* Bottone elimina un po' più compatto */
-                margin-left: auto; /* Lo spinge a destra */
-            }
-            
-            .stats {
-                gap: 10px;
-            }
-            
-            .stat-number {
-                font-size: 1.5em;
-            }
+            body { padding: 15px; align-items: flex-start; }
+            .container { padding: 25px 20px; margin-top: 10px; border-radius: 20px; }
+            h1 img { max-width: 70%; }
+            .add-task { flex-direction: column; }
+            .add-task button { width: 100%; padding: 16px; }
+            .task-item { padding: 14px; gap: 12px; }
+            .task-content { min-width: 0; } /* Fix flexbox overflow */
+            .delete-btn { padding: 8px; }
+            .stats { gap: 10px; justify-content: space-between; }
+            .stat { min-width: auto; flex: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="sync-status" id="syncStatus">✅ Connesso</div>
+
         <h1>
             <img src="https://github.com/saveriopititto-bot/smemorella/blob/main/assets/smemorella.png?raw=true" alt="Smemorella">
         </h1>
+        <p class="subtitle">Un'app per smemoinnamorati 💕</p>
 
         <div id="setupInstructions" class="setup-instructions">
-            <h3>⚙️ Configurazione Supabase (3 minuti!)</h3>
-            <ol>
-                <li>Vai su <a href="https://supabase.com" target="_blank">supabase.com</a> e crea un account gratuito</li>
-                <li>Crea un nuovo progetto (scegli un nome e una password)</li>
-                <li>Vai su "Project Settings" → "API"</li>
-                <li>Copia <code>Project URL</code> e <code>anon public key</code></li>
-                <li>Incollali nello script qui sotto (cerca <code>SUPABASE_URL</code>)</li>
-                <li>Vai su "SQL Editor" e esegui questo comando:
-                    <pre style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin-top: 10px; overflow-x: auto; white-space: pre-wrap;">
-CREATE TABLE tasks (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  text TEXT NOT NULL,
-  completed BOOLEAN DEFAULT false,
-  created_by TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
-ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow all operations" ON tasks
-  FOR ALL USING (true) WITH CHECK (true);
-                    </pre>
-                </li>
-            </ol>
-            <p style="margin-top: 15px; color: #A68D66; font-weight: bold;">✨ Fatto! L'app si sincronizzerà automaticamente!</p>
+            <h3>⚙️ Configurazione Supabase</h3>
+            <p>Se vedi questo messaggio, controlla la console o lo stato della connessione.</p>
         </div>
 
-        <div class="sync-status" id="syncStatus">✅ Connesso</div>
-
         <div class="name-setup" id="nameSetup">
-            <input type="text" id="nameInput" placeholder="Inserisci il tuo nome..." />
-            <button onclick="setUserName()">Conferma</button>
+            <input type="text" id="nameInput" placeholder="Chi sei? (es. Lui o Lei)" />
+            <button class="btn-primary" onclick="setUserName()">Entra 🚀</button>
         </div>
 
         <div id="mainApp" style="display: none;">
             <div class="current-user" id="currentUser"></div>
 
             <div class="add-task">
-                <input type="text" id="taskInput" placeholder="Cosa dobbiamo fare...?" />
-                <button onclick="addTask()">Aggiungi</button>
+                <input type="text" id="taskInput" placeholder="Nuova cosa da ricordare..." />
+                <button class="btn-primary" onclick="addTask()">Aggiungi ✨</button>
             </div>
 
             <ul class="tasks" id="taskList"></ul>
@@ -423,11 +358,11 @@ CREATE POLICY "Allow all operations" ON tasks
             <div class="stats">
                 <div class="stat">
                     <div class="stat-number" id="totalTasks">0</div>
-                    <div class="stat-label">Totali</div>
+                    <div class="stat-label">Note</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number" id="completedTasks">0</div>
-                    <div class="stat-label">Completate</div>
+                    <div class="stat-label">Fatte</div>
                 </div>
                 <div class="stat">
                     <div class="stat-number" id="pendingTasks">0</div>
@@ -440,27 +375,24 @@ CREATE POLICY "Allow all operations" ON tasks
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-        // 🔥 CONFIGURAZIONE SUPABASE - I tuoi dati sono già inseriti qui
+        // 🔥 CONFIGURAZIONE SUPABASE
         const SUPABASE_URL = 'https://ydtugfoezvdjsqmtnejg.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkdHVnZm9lenZkanNxbXRuZWpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDA2NTEsImV4cCI6MjA4NjQ3NjY1MX0.i9zm2s6p8n6opYiKg3SUvh-uQBreyiGfWC6zJ0U9Jfs';
 
-        // Verifica se Supabase è configurato
         const isConfigured = SUPABASE_URL !== 'https://your-project.supabase.co';
-        
         let supabase;
         let tasksChannel;
-        
+        let currentUser = '';
+
+        // INIZIALIZZAZIONE
         if (isConfigured) {
             supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             document.getElementById('setupInstructions').style.display = 'none';
-            showSyncStatus('✅ Connesso', '');
         } else {
-            showSyncStatus('⚠️ Configurazione necessaria', 'error');
+            showSyncStatus('⚠️ Configurazione mancante', 'error');
         }
 
-        let currentUser = '';
-
-        // Load user from localStorage
+        // CARICAMENTO UTENTE SALVATO
         window.addEventListener('load', () => {
             const savedUser = localStorage.getItem('todo-username');
             if (savedUser) {
@@ -469,6 +401,7 @@ CREATE POLICY "Allow all operations" ON tasks
             }
         });
 
+        // 1. LOGIN UTENTE + RICHIESTA NOTIFICHE
         window.setUserName = function() {
             const nameInput = document.getElementById('nameInput');
             const name = nameInput.value.trim();
@@ -476,6 +409,14 @@ CREATE POLICY "Allow all operations" ON tasks
             if (name) {
                 currentUser = name;
                 localStorage.setItem('todo-username', name);
+                
+                // Richiesta permessi notifica
+                if ("Notification" in window) {
+                    Notification.requestPermission().then(permission => {
+                        console.log("Stato notifiche:", permission);
+                    });
+                }
+
                 showMainApp();
             }
         }
@@ -483,16 +424,15 @@ CREATE POLICY "Allow all operations" ON tasks
         function showMainApp() {
             document.getElementById('nameSetup').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            document.getElementById('currentUser').textContent = `👤 ${currentUser}`;
+            document.getElementById('currentUser').textContent = `Ciao, ${currentUser}! 👋`;
             
             if (isConfigured) {
                 loadTasks();
                 subscribeToChanges();
-            } else {
-                renderOfflineMessage();
             }
         }
 
+        // 2. CARICAMENTO DATI
         async function loadTasks() {
             try {
                 const { data, error } = await supabase
@@ -501,111 +441,103 @@ CREATE POLICY "Allow all operations" ON tasks
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
-                
                 renderTasks(data || []);
-                showSyncStatus('✅ Sincronizzato', '');
             } catch (error) {
-                console.error('Errore caricamento tasks:', error);
-                showSyncStatus('❌ Errore di connessione', 'error');
+                console.error('Errore:', error);
+                showSyncStatus('Offline', 'error');
             }
         }
 
+        // 3. SUBSCRIPTION + NOTIFICHE 🔔
         function subscribeToChanges() {
-            // Sottoscrizione ai cambiamenti in tempo reale
             tasksChannel = supabase
                 .channel('tasks-changes')
                 .on('postgres_changes', 
                     { event: '*', schema: 'public', table: 'tasks' }, 
                     (payload) => {
-                        console.log('Cambiamento rilevato:', payload);
-                        loadTasks();
+                        // Se c'è un nuovo task e non l'ho creato io -> NOTIFICA
+                        if (payload.eventType === 'INSERT') {
+                            const newTask = payload.new;
+                            if (newTask.created_by !== currentUser) {
+                                sendNotification(`Nuova nota da ${newTask.created_by} ❤️`, newTask.text);
+                            }
+                        }
+                        loadTasks(); // Ricarica la lista
                     }
                 )
-                .subscribe();
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') showSyncStatus('✅ Online', '');
+                });
         }
 
-        window.addTask = async function() {
-            if (!isConfigured) {
-                alert('Configura Supabase prima di aggiungere task!');
-                return;
+        function sendNotification(title, body) {
+            if (Notification.permission === "granted") {
+                // Icona dell'app per la notifica
+                const iconUrl = 'https://github.com/saveriopititto-bot/smemorella/blob/main/assets/smemorella.png?raw=true';
+                try {
+                    new Notification(title, { body: body, icon: iconUrl });
+                } catch (e) {
+                    console.log("Errore notifica mobile:", e);
+                }
             }
+        }
 
+        // 4. AGGIUNGI TASK
+        window.addTask = async function() {
+            if (!isConfigured) return;
             const taskInput = document.getElementById('taskInput');
             const taskText = taskInput.value.trim();
             
             if (taskText) {
-                showSyncStatus('🔄 Sincronizzazione...', 'syncing');
-                
+                showSyncStatus('Salvataggio...', 'syncing');
                 try {
-                    const { error } = await supabase
-                        .from('tasks')
-                        .insert([
-                            {
-                                text: taskText,
-                                completed: false,
-                                created_by: currentUser
-                            }
-                        ]);
-
+                    const { error } = await supabase.from('tasks').insert([
+                        { text: taskText, completed: false, created_by: currentUser }
+                    ]);
                     if (error) throw error;
-                    
                     taskInput.value = '';
                 } catch (error) {
-                    console.error('Errore aggiunta task:', error);
-                    showSyncStatus('❌ Errore', 'error');
+                    showSyncStatus('Errore', 'error');
                 }
             }
         }
 
+        // 5. CAMBIA STATO (COMPLETATO/NON)
         window.toggleTask = async function(taskId, completed) {
             if (!isConfigured) return;
-            
-            showSyncStatus('🔄 Sincronizzazione...', 'syncing');
+            // Feedback aptico (vibrazione) su mobile
+            if (navigator.vibrate) navigator.vibrate(50);
             
             try {
-                const { error } = await supabase
-                    .from('tasks')
-                    .update({ completed: !completed })
-                    .eq('id', taskId);
-
-                if (error) throw error;
+                await supabase.from('tasks').update({ completed: !completed }).eq('id', taskId);
             } catch (error) {
-                console.error('Errore aggiornamento task:', error);
-                showSyncStatus('❌ Errore', 'error');
+                console.error(error);
             }
         }
 
+        // 6. ELIMINA TASK
         window.deleteTask = async function(taskId) {
             if (!isConfigured) return;
-            
-            if (confirm('Eliminare questo task?')) {
-                showSyncStatus('🔄 Sincronizzazione...', 'syncing');
-                
+            if (confirm('Sicuro di voler cancellare?')) {
                 try {
-                    const { error } = await supabase
-                        .from('tasks')
-                        .delete()
-                        .eq('id', taskId);
-
-                    if (error) throw error;
+                    await supabase.from('tasks').delete().eq('id', taskId);
                 } catch (error) {
-                    console.error('Errore eliminazione task:', error);
-                    showSyncStatus('❌ Errore', 'error');
+                    console.error(error);
                 }
             }
         }
 
+        // RENDER GRAFICO
         function renderTasks(tasks) {
             const taskList = document.getElementById('taskList');
             
             if (tasks.length === 0) {
                 taskList.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">✨</div>
-                        <p>Nessuna cosa da fare!</p>
-                        <p style="font-size: 0.9em; margin-top: 10px;">Aggiungi qualcosa per iniziare</p>
-                    </div>
-                `;
+                        <div class="empty-state-icon">💌</div>
+                        <p>Nessun appunto d'amore qui...</p>
+                        <p style="font-size: 0.85em; margin-top: 10px;">Scrivi qualcosa per iniziare!</p>
+                    </div>`;
             } else {
                 taskList.innerHTML = tasks.map(task => `
                     <li class="task-item ${task.completed ? 'completed' : ''}">
@@ -618,65 +550,43 @@ CREATE POLICY "Allow all operations" ON tasks
                         <div class="task-content">
                             <div class="task-text">${escapeHtml(task.text)}</div>
                             <div class="task-meta">
-                                Aggiunto da ${escapeHtml(task.created_by)} • ${formatDate(task.created_at)}
+                                ${escapeHtml(task.created_by)} • ${formatDate(task.created_at)}
                             </div>
                         </div>
-                        <button class="delete-btn" onclick="deleteTask('${task.id}')">Elimina</button>
+                        <button class="delete-btn" onclick="deleteTask('${task.id}')">✕</button>
                     </li>
                 `).join('');
             }
-
             updateStats(tasks);
-        }
-
-        function renderOfflineMessage() {
-            const taskList = document.getElementById('taskList');
-            taskList.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">⚙️</div>
-                    <p>Configura Supabase per iniziare!</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Segui le istruzioni sopra</p>
-                </div>
-            `;
         }
 
         function updateStats(tasks) {
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
-            const pending = total - completed;
-
             document.getElementById('totalTasks').textContent = total;
             document.getElementById('completedTasks').textContent = completed;
-            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('pendingTasks').textContent = total - completed;
         }
 
+        // UTILITY FUNCTIONS
         function showSyncStatus(message, className) {
             const status = document.getElementById('syncStatus');
             status.textContent = message;
             status.className = 'sync-status ' + className;
             status.style.display = 'block';
-            
-            if (!className) {
-                setTimeout(() => {
-                    status.style.display = 'none';
-                }, 2000);
+            if (!className || className === 'syncing') {
+                setTimeout(() => { status.style.display = 'none'; }, 2000);
             }
         }
 
         function formatDate(dateString) {
             const date = new Date(dateString);
             const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-
-            if (diffMins < 1) return 'Ora';
-            if (diffMins < 60) return `${diffMins} min fa`;
-            if (diffHours < 24) return `${diffHours}h fa`;
-            if (diffDays < 7) return `${diffDays}g fa`;
-            
-            return date.toLocaleDateString('it-IT');
+            const diffMins = Math.floor((now - date) / 60000);
+            if (diffMins < 1) return 'Adesso';
+            if (diffMins < 60) return `${diffMins}m fa`;
+            if (diffMins < 1440) return `${Math.floor(diffMins/60)}h fa`;
+            return date.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
         }
 
         function escapeHtml(text) {
@@ -685,29 +595,20 @@ CREATE POLICY "Allow all operations" ON tasks
             return div.innerHTML;
         }
 
-        // Handle Enter key
+        // INVIO CON TASTO INVIO
         document.addEventListener('DOMContentLoaded', () => {
-            const nameInput = document.getElementById('nameInput');
-            const taskInput = document.getElementById('taskInput');
-            
-            if (nameInput) {
-                nameInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') window.setUserName();
+            const inputs = ['nameInput', 'taskInput'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') id === 'nameInput' ? setUserName() : addTask();
                 });
-            }
-            
-            if (taskInput) {
-                taskInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') window.addTask();
-                });
-            }
+            });
         });
 
-        // Cleanup on page unload
+        // CLEANUP
         window.addEventListener('beforeunload', () => {
-            if (tasksChannel) {
-                supabase.removeChannel(tasksChannel);
-            }
+            if (tasksChannel) supabase.removeChannel(tasksChannel);
         });
     </script>
 </body>
